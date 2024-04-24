@@ -1,0 +1,80 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int yylex();
+void yyerror(char *);
+%}
+
+%token INTEGER
+%token FLOAT
+%token IDENTIFIER
+%token IF ELSE WHILE
+%token EQ NE GT GE LT LE PLUS MINUS TIMES DIVIDE LPAREN RPAREN LBRACE RBRACE SEMICOLON
+%token INT_DATA_TYPE FLOAT_DATA_TYPE
+
+%left PLUS MINUS
+%left TIMES DIVIDE
+%right UMINUS
+
+%%
+program: statement
+        | program statement
+        ;
+
+statement: identifier_declaration SEMICOLON
+         | identifier_assignment SEMICOLON
+         | expr SEMICOLON
+         | comparison SEMICOLON
+         | IF LPAREN comparison RPAREN LBRACE program RBRACE
+         | IF LPAREN comparison RPAREN LBRACE program RBRACE ELSE LBRACE program RBRACE
+         | WHILE LPAREN comparison RPAREN LBRACE program RBRACE
+         ;
+
+expr: INTEGER
+    | FLOAT
+    | IDENTIFIER
+    | expr PLUS expr
+    | expr MINUS expr
+    | expr TIMES expr
+    | expr DIVIDE expr
+    | expr EQ expr
+    | expr NE expr
+    | expr GT expr
+    | expr GE expr
+    | expr LT expr
+    | expr LE expr
+    | LPAREN expr RPAREN
+    | MINUS expr %prec UMINUS
+    ;
+
+comparison: expr EQ expr
+          | expr NE expr
+          | expr GT expr
+          | expr GE expr
+          | expr LT expr
+          | expr LE expr
+          ;
+
+identifier_declaration: INT_DATA_TYPE IDENTIFIER
+                    | FLOAT_DATA_TYPE IDENTIFIER
+                    | INT_DATA_TYPE IDENTIFIER EQ expr
+                    | FLOAT_DATA_TYPE IDENTIFIER EQ expr
+                    ;
+
+identifier_assignment: IDENTIFIER EQ expr
+                    ;
+
+%%
+extern char* yytext;
+extern int yylineno;
+
+void yyerror(char *s) {
+    printf("Error on line %d: %s ( %s )\n", yylineno, s, yytext);
+}
+
+int main() {
+    yyparse();
+    return 0;
+}

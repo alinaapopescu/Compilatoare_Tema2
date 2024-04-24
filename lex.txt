@@ -1,0 +1,36 @@
+%{
+#include "grammar.tab.h"
+%}
+
+%option yylineno
+
+%%
+
+"if"               { printf("if\n"); return IF; }
+"else"             { printf("else\n"); return ELSE; }
+"while"            { printf("while\n"); return WHILE; }
+"=="               { printf("==\n"); return EQ; }
+"!="               { printf("!=\n"); return NE; }
+">"                { printf(">\n"); return GT; }
+">="               { printf(">=\n"); return GE; }
+"<"                { printf("<\n"); return LT; }
+"<="               { printf("<=\n"); return LE; }
+"+"                { printf("+\n"); return PLUS; }
+"-"                { printf("-\n"); return MINUS; }
+"*"                { printf("*\n"); return TIMES; }
+"/"                { printf("/\n"); return DIVIDE; }
+"="                { printf("=\n"); return EQ; }
+"("                { printf("(\n"); return LPAREN; }
+")"                { printf(")\n"); return RPAREN; }
+"{"                { printf("{\n"); return LBRACE; }
+"}"                { printf("}\n"); return RBRACE; }
+";"                { printf(";\n"); return SEMICOLON; }
+"int"              { printf("int\n"); return INT_DATA_TYPE;}
+"float"            { printf("float\n"); return FLOAT_DATA_TYPE;}
+[0-9]+             { printf("INTEGER\n"); return INTEGER; }
+[0-9]*\.[0-9]+     { printf("FLOAT\n"); return FLOAT; }
+[a-zA-Z][a-zA-Z0-9]* { printf("IDENTIFIER\n"); return IDENTIFIER; }
+[ \t\n]+           { /* skip whitespace */ }
+.                  { printf("Unknown token %s\n", yytext); }
+
+%%
